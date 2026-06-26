@@ -1,0 +1,392 @@
+---
+// src/pages/index.astro
+// Landing page de boda — pantalla completa para reproducir un video a los invitados.
+// Paleta: madera/tierra · verde oliva/eucalipto · dorado.
+// Sin frameworks pesados: solo Astro + Tailwind + un script ligero de Vanilla JS.
+
+const novios = "Klaudia & Rodolfo";   // ← Nombres de los novios
+// Incluye el `base` automáticamente (BASE_URL = "/nasz-slub/" en producción, "/" en local)
+const videoSrc = `${import.meta.env.BASE_URL}assets/wedding-video.mp4`;
+
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="pl" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Wyjątkowy film dla naszych gości." />
+    <title>{novios} · Nasza Historia</title>
+
+    <!-- Tipografías elegantes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <!-- h-screen · w-screen · overflow-hidden  →  full screen sin scroll -->
+  <body
+    class="h-screen w-screen overflow-hidden bg-[#f3ece1] text-[#4a4036] antialiased selection:bg-[#7c8a5a]/30"
+  >
+    <main class="relative h-full w-full">
+      <!-- ================= PANTALLA DE BIENVENIDA ================= -->
+      <section
+        id="welcome"
+        class="absolute inset-0 z-10 flex flex-col items-center justify-center
+               px-6 text-center transition-all duration-700 ease-out
+               bg-[#f3ece1]
+               bg-[radial-gradient(ellipse_at_top,_#fbf6ee_0%,_#f0e7d8_45%,_#e7dcc7_100%)]"
+      >
+        <!-- Textura/veladura sutil de madera -->
+        <div
+          class="pointer-events-none absolute inset-0 opacity-[0.12]
+                 bg-[linear-gradient(110deg,_#a9794e_0%,_transparent_30%,_transparent_70%,_#8a6a46_100%)]"
+          aria-hidden="true"
+        >
+        </div>
+
+        <div class="relative flex max-w-xl flex-col items-center">
+          <!-- Adorno superior -->
+          <p
+            class="mb-5 text-xs uppercase tracking-[0.4em] text-[#7c8a5a]"
+            style="font-family: 'Cinzel', serif;"
+          >
+            · Nasz Ślub ·
+          </p>
+
+          <!-- Línea dorada decorativa -->
+          <div class="mb-6 flex items-center gap-3">
+            <span class="h-px w-10 bg-[#c9a24b]/70"></span>
+            <span class="text-[#c9a24b]">❧</span>
+            <span class="h-px w-10 bg-[#c9a24b]/70"></span>
+          </div>
+
+          <!-- Nombres de los novios -->
+          <h1
+            class="text-4xl leading-tight text-[#5a4a38] sm:text-5xl md:text-6xl"
+            style="font-family: 'Cinzel', serif; font-optical-sizing: auto; font-weight: 600;"
+          >
+            {novios}
+          </h1>
+
+          <!-- Título suave -->
+          <p
+            class="mt-4 max-w-md text-sm uppercase tracking-[0.25em] text-[#6b6051] sm:text-base"
+            style="font-family: 'Cinzel', serif; font-optical-sizing: auto; font-weight: 400;"
+          >
+            Zobaczcie, dlaczego się tu znaleźliśmy
+          </p>
+
+          <!-- Botón de acción -->
+          <button
+            id="play-btn"
+            class="group mt-10 inline-flex items-center gap-3 rounded-full
+                   border border-[#c9a24b]/60 bg-[#7c8a5a] px-8 py-4
+                   text-sm font-medium uppercase tracking-[0.18em] text-[#f7f3ea]
+                   shadow-lg shadow-[#7c8a5a]/30 transition-all duration-300
+                   hover:bg-[#6c7a4c] hover:shadow-xl hover:shadow-[#7c8a5a]/40
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a24b]
+                   active:scale-[0.97]"
+          >
+            <!-- icono play -->
+            <svg
+              class="h-4 w-4 transition-transform duration-300 group-hover:scale-110"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            Zobacz Film
+          </button>
+
+          <p class="mt-6 text-xs tracking-wide text-[#9a8d79]">
+            Zalecamy włączenie dźwięku 🔊
+          </p>
+        </div>
+      </section>
+
+      <!-- ================= REPRODUCTOR DE VIDEO ================= -->
+      <section
+        id="player"
+        class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center
+               bg-black/95 opacity-0 transition-opacity duration-700 ease-out"
+        aria-hidden="true"
+      >
+        <!-- Botón cerrar / volver -->
+        <button
+          id="close-btn"
+          class="absolute right-4 top-4 z-30 flex h-11 w-11 items-center justify-center
+                 rounded-full border border-white/20 bg-black/40 text-white/80
+                 backdrop-blur-sm transition-all duration-300
+                 hover:bg-black/60 hover:text-white
+                 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a24b]
+                 sm:right-6 sm:top-6"
+          aria-label="Zamknij film i wróć na początek"
+          title="Wróć na początek"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+
+        <!-- Aviso "gira el teléfono" — solo visible en vertical (móvil) -->
+        <div
+          class="pointer-events-none absolute inset-x-0 bottom-20 z-20 flex flex-col
+                 items-center gap-3 px-6 text-center text-white/85
+                 landscape:hidden"
+          aria-hidden="true"
+        >
+          <svg
+            class="h-9 w-9 animate-pulse text-[#c9a24b]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="7" y="2" width="10" height="20" rx="2" />
+            <path d="M3 9l-1 3 3 1M21 15l1-3-3-1" />
+          </svg>
+          <p class="text-xs uppercase tracking-[0.18em]" style="font-family: 'Cinzel', serif;">
+            Obróć telefon, aby oglądać na pełnym ekranie
+          </p>
+        </div>
+
+        <!-- Video nativo HTML5 -->
+        <video
+          id="video"
+          class="h-full w-full object-contain sm:object-cover md:object-contain"
+          controls
+          playsinline
+          preload="metadata"
+        >
+          <source src={videoSrc} type="video/mp4" />
+          Twoja przeglądarka nie obsługuje odtwarzania wideo.
+        </video>
+      </section>
+
+      <!-- ================= TARJETA DE AGRADECIMIENTO (al terminar) ================= -->
+      <section
+        id="thankyou"
+        class="pointer-events-none absolute inset-0 z-30 flex flex-col items-center
+               justify-center px-6 text-center opacity-0
+               transition-all duration-700 ease-out
+               bg-[radial-gradient(ellipse_at_top,_#fbf6ee_0%,_#f0e7d8_45%,_#e7dcc7_100%)]"
+        aria-hidden="true"
+      >
+        <!-- Textura/veladura sutil de madera -->
+        <div
+          class="pointer-events-none absolute inset-0 opacity-[0.12]
+                 bg-[linear-gradient(110deg,_#a9794e_0%,_transparent_30%,_transparent_70%,_#8a6a46_100%)]"
+          aria-hidden="true"
+        >
+        </div>
+
+        <div
+          class="relative flex max-w-lg flex-col items-center rounded-2xl
+                 border border-[#c9a24b]/40 bg-[#fbf6ee]/70 px-8 py-12 shadow-xl
+                 shadow-[#a9794e]/10 backdrop-blur-sm sm:px-12"
+        >
+          <!-- Corazón / adorno -->
+          <span class="text-3xl text-[#c9a24b]">❦</span>
+
+          <!-- Línea dorada decorativa -->
+          <div class="my-6 flex items-center gap-3">
+            <span class="h-px w-10 bg-[#c9a24b]/70"></span>
+            <span class="text-[#c9a24b]">❧</span>
+            <span class="h-px w-10 bg-[#c9a24b]/70"></span>
+          </div>
+
+          <!-- Mensaje de agradecimiento -->
+          <h2
+            class="text-3xl leading-snug text-[#5a4a38] sm:text-4xl"
+            style="font-family: 'Cinzel', serif; font-optical-sizing: auto; font-weight: 600;"
+          >
+            Dziękujemy!
+          </h2>
+
+          <p
+            class="mt-5 max-w-md text-sm uppercase leading-relaxed tracking-[0.18em] text-[#6b6051] sm:text-base"
+            style="font-family: 'Cinzel', serif; font-optical-sizing: auto; font-weight: 400;"
+          >
+            Dziękujemy, że byliście z nami w tym wyjątkowym dniu
+            i świętowaliście razem z nami.
+          </p>
+
+          <!-- Firma de los novios -->
+          <p
+            class="mt-8 text-xl text-[#5a4a38] sm:text-2xl"
+            style="font-family: 'Cinzel', serif; font-optical-sizing: auto; font-weight: 600;"
+          >
+            {novios}
+          </p>
+
+          <!-- Botón cerrar -->
+          <button
+            id="thankyou-close"
+            class="mt-10 inline-flex items-center gap-2 rounded-full
+                   border border-[#c9a24b]/60 bg-[#7c8a5a] px-7 py-3
+                   text-xs font-medium uppercase tracking-[0.18em] text-[#f7f3ea]
+                   shadow-lg shadow-[#7c8a5a]/30 transition-all duration-300
+                   hover:bg-[#6c7a4c] hover:shadow-xl hover:shadow-[#7c8a5a]/40
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a24b]
+                   active:scale-[0.97]"
+          >
+            Zamknij
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- ================= LÓGICA LIGERA (Vanilla JS) ================= -->
+    <script>
+      const playBtn = document.getElementById("play-btn");
+      const closeBtn = document.getElementById("close-btn");
+      const welcome = document.getElementById("welcome");
+      const player = document.getElementById("player");
+      const thankyou = document.getElementById("thankyou");
+      const thankyouClose = document.getElementById("thankyou-close");
+      const video = document.getElementById("video") as HTMLVideoElement | null;
+
+      // Intenta poner el contenedor a pantalla completa (compatibilidad multi-navegador)
+      function enterFullscreen() {
+        const el = player as any;
+        const vid = video as any;
+        if (el.requestFullscreen) return el.requestFullscreen();
+        if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+        // Safari de iPhone: solo el elemento <video> soporta pantalla completa
+        if (vid.webkitEnterFullscreen) return vid.webkitEnterFullscreen();
+        return undefined;
+      }
+
+      // Bloquea la orientación a horizontal (Android/Chrome lo permiten; iOS no)
+      function lockLandscape() {
+        const orientation = (screen as any).orientation;
+        if (orientation && typeof orientation.lock === "function") {
+          orientation.lock("landscape").catch(() => {});
+        }
+      }
+
+      function exitFullscreen() {
+        const doc = document as any;
+        if (doc.exitFullscreen) doc.exitFullscreen().catch(() => {});
+        else if (doc.webkitExitFullscreen) doc.webkitExitFullscreen();
+        const orientation = (screen as any).orientation;
+        if (orientation && typeof orientation.unlock === "function") {
+          try { orientation.unlock(); } catch (_) {}
+        }
+      }
+
+      function openPlayer() {
+        if (!welcome || !player || !video) return;
+
+        // Mostrar reproductor con transición suave
+        player.classList.remove("pointer-events-none", "opacity-0");
+        player.classList.add("opacity-100");
+        player.setAttribute("aria-hidden", "false");
+
+        // Ocultar la pantalla de bienvenida
+        welcome.classList.add("pointer-events-none", "opacity-0");
+        welcome.setAttribute("aria-hidden", "true");
+
+        // Autoplay CON sonido (permitido porque hubo interacción del usuario)
+        video.muted = false;
+        const attempt = video.play();
+        if (attempt && typeof attempt.then === "function") {
+          attempt.catch(() => {
+            // Si el navegador bloquea el audio, reintenta en silencio
+            video.muted = true;
+            video.play().catch(() => {});
+          });
+        }
+
+        // Pantalla completa + giro a horizontal (mejor experiencia en el celular)
+        const fs = enterFullscreen();
+        if (fs && typeof fs.then === "function") {
+          fs.then(lockLandscape).catch(() => {});
+        } else {
+          lockLandscape();
+        }
+      }
+
+      let videoEnded = false;
+
+      // Oculta el reproductor (sin decidir qué mostrar después)
+      function hidePlayer() {
+        exitFullscreen();
+        if (video) video.pause();
+        player?.classList.add("pointer-events-none", "opacity-0");
+        player?.classList.remove("opacity-100");
+        player?.setAttribute("aria-hidden", "true");
+      }
+
+      // Vuelve a la pantalla de bienvenida (reinicia todo)
+      function resetToWelcome() {
+        videoEnded = false;
+        hidePlayer();
+        if (video) video.currentTime = 0;
+
+        // Ocultar tarjeta de agradecimiento
+        thankyou?.classList.add("pointer-events-none", "opacity-0");
+        thankyou?.classList.remove("opacity-100");
+        thankyou?.setAttribute("aria-hidden", "true");
+
+        // Mostrar bienvenida
+        welcome?.classList.remove("pointer-events-none", "opacity-0");
+        welcome?.setAttribute("aria-hidden", "false");
+      }
+
+      // Muestra la tarjeta de agradecimiento (al terminar el video)
+      function showThankYou() {
+        hidePlayer();
+        thankyou?.classList.remove("pointer-events-none", "opacity-0");
+        thankyou?.classList.add("opacity-100");
+        thankyou?.setAttribute("aria-hidden", "false");
+      }
+
+      playBtn?.addEventListener("click", openPlayer);
+      closeBtn?.addEventListener("click", resetToWelcome);
+      thankyouClose?.addEventListener("click", resetToWelcome);
+
+      // Cerrar con la tecla Escape (desde el video o desde la tarjeta)
+      document.addEventListener("keydown", (e) => {
+        const playerOpen = player?.classList.contains("opacity-100");
+        const thanksOpen = thankyou?.classList.contains("opacity-100");
+        if (e.key === "Escape" && (playerOpen || thanksOpen)) {
+          resetToWelcome();
+        }
+      });
+
+      // Al terminar el video → mostrar tarjeta de agradecimiento
+      video?.addEventListener("ended", () => {
+        videoEnded = true;
+        showThankYou();
+      });
+
+      // Respaldo: al arrastrar la barra hasta el final, algunos navegadores
+      // NO disparan "ended". Detectamos también la cercanía al final.
+      video?.addEventListener("timeupdate", () => {
+        if (!video || videoEnded) return;
+        const dur = video.duration;
+        if (isFinite(dur) && dur > 0 && video.currentTime >= dur - 0.3) {
+          videoEnded = true;
+          showThankYou();
+        }
+      });
+
+      // Safari de iPhone usa el reproductor nativo a pantalla completa.
+      // Al cerrarlo: si el video terminó, mostramos el agradecimiento;
+      // si lo cerró antes de tiempo, volvemos al inicio.
+      video?.addEventListener("webkitendfullscreen", () => {
+        if (videoEnded) showThankYou();
+        else resetToWelcome();
+      });
+    </script>
+  </body>
+</html>

@@ -20,6 +20,35 @@ import "../styles/global.css";
     <meta name="description" content="Wyjątkowy film dla naszych gości." />
     <title>{novios} · Nasza Historia</title>
 
+    <!-- ===== Open Graph (vista previa en WhatsApp / Facebook / Telegram) ===== -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Klaudia & Rodolfo" />
+    <meta property="og:title" content="Klaudia & Rodolfo — Nasz Ślub" />
+    <meta
+      property="og:description"
+      content="Zobaczcie, dlaczego się tu znaleźliśmy. Film z naszego wyjątkowego dnia."
+    />
+    <meta property="og:url" content="https://heybaldur.github.io/nasz-slub/" />
+    <meta
+      property="og:image"
+      content="https://heybaldur.github.io/nasz-slub/assets/banner-og.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="900" />
+    <meta property="og:locale" content="pl_PL" />
+
+    <!-- ===== Twitter Card ===== -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Klaudia & Rodolfo — Nasz Ślub" />
+    <meta
+      name="twitter:description"
+      content="Zobaczcie, dlaczego się tu znaleźliśmy. Film z naszego wyjątkowego dnia."
+    />
+    <meta
+      name="twitter:image"
+      content="https://heybaldur.github.io/nasz-slub/assets/banner-og.jpg"
+    />
+
     <!-- Tipografías elegantes -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -228,19 +257,41 @@ import "../styles/global.css";
             {novios}
           </p>
 
-          <!-- Botón cerrar -->
-          <button
-            id="thankyou-close"
-            class="mt-10 inline-flex items-center gap-2 rounded-full
-                   border border-[#c9a24b]/60 bg-[#7c8a5a] px-7 py-3
-                   text-xs font-medium uppercase tracking-[0.18em] text-[#f7f3ea]
-                   shadow-lg shadow-[#7c8a5a]/30 transition-all duration-300
-                   hover:bg-[#6c7a4c] hover:shadow-xl hover:shadow-[#7c8a5a]/40
-                   focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a24b]
-                   active:scale-[0.97]"
-          >
-            Zamknij
-          </button>
+          <!-- Botones: descargar (destacado) + cerrar (secundario) -->
+          <div class="mt-10 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:justify-center">
+            <!-- Descargar el video -->
+            <a
+              href={videoSrc}
+              download="Klaudia-Rodolfo-film.mp4"
+              class="inline-flex w-full items-center justify-center gap-2 rounded-full
+                     border border-[#c9a24b]/60 bg-[#7c8a5a] px-7 py-3
+                     text-xs font-medium uppercase tracking-[0.18em] text-[#f7f3ea]
+                     shadow-lg shadow-[#7c8a5a]/30 transition-all duration-300
+                     hover:bg-[#6c7a4c] hover:shadow-xl hover:shadow-[#7c8a5a]/40
+                     focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a24b]
+                     active:scale-[0.97] sm:w-auto"
+            >
+              <!-- icono descargar -->
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" />
+              </svg>
+              Pobierz film
+            </a>
+
+            <!-- Cerrar -->
+            <button
+              id="thankyou-close"
+              class="inline-flex w-full items-center justify-center gap-2 rounded-full
+                     border border-[#7c8a5a]/50 bg-transparent px-7 py-3
+                     text-xs font-medium uppercase tracking-[0.18em] text-[#5a4a38]
+                     transition-all duration-300
+                     hover:bg-[#7c8a5a]/10 hover:border-[#7c8a5a]
+                     focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a24b]
+                     active:scale-[0.97] sm:w-auto"
+            >
+              Zamknij
+            </button>
+          </div>
         </div>
       </section>
     </main>

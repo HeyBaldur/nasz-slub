@@ -5,8 +5,9 @@
 // Sin frameworks pesados: solo Astro + Tailwind + un script ligero de Vanilla JS.
 
 const novios = "Klaudia & Rodolfo";   // ← Nombres de los novios
-// Incluye el `base` automáticamente (BASE_URL = "/nasz-slub/" en producción, "/" en local)
-const videoSrc = `${import.meta.env.BASE_URL}assets/wedding-video.mp4`;
+// Ruta RELATIVA (sin "/" inicial): el navegador la resuelve respecto a la URL
+// de la página, así funciona en local ("/") y en GitHub Pages ("/nasz-slub/").
+const videoSrc = "assets/wedding-video.mp4";
 
 import "../styles/global.css";
 ---
